@@ -1,0 +1,42 @@
+pipeline {
+    agent any
+    
+    tools {
+        maven 'Maven(3.9.9)' // Make sure 'Maven' is configured in Jenkins
+    }
+    
+    parameters {
+        string(name: 'CGPA', defaultValue: '', description: 'Enter your CGPA')
+    }
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'master', url: 'https://github.com/boss2412/cgpa_maven.git' // Replace with your GitHub repo URL
+            }
+        }
+        
+        stage('Build') {
+            steps {
+                // Use 'bat' for Windows instead of 'sh'
+                bat 'mvn clean compile'
+            }
+        }
+        
+        stage('Run App') {
+            steps {
+                // Use 'bat' and Windows-specific command for running Java application
+                bat 'mvn exec:java -Dexec.mainClass="com.example.App"'
+            }
+        }
+    }
+    
+    post {
+        success {
+            echo 'Pipeline executed successfully.'
+        }
+        failure {
+            echo 'Pipeline failed.'
+        }
+    }
+}
